@@ -49,7 +49,7 @@ const BookingForm = ({ spaces, bookings, timetable, onAddBooking }) => {
       issues.push("Please select a valid venue.");
     }
 
-    if (selectedSpace && Number(form.participants) > selectedSpace.capacity) {
+    if (selectedSpace && selectedSpace.capacity && Number(form.participants) > selectedSpace.capacity) {
       issues.push("Participant count exceeds the selected space capacity.");
     }
 
@@ -149,7 +149,7 @@ const BookingForm = ({ spaces, bookings, timetable, onAddBooking }) => {
           <select id="space" value={form.spaceId} onChange={handleChange("spaceId")}>
             {spaces.map((space) => (
               <option key={space.id} value={space.id}>
-                {space.name} ({space.capacity})
+                {space.name} ({space.capacity ? `${space.capacity} Pax` : "Capacity not published"})
               </option>
             ))}
           </select>

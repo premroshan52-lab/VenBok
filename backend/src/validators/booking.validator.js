@@ -1,5 +1,28 @@
-const BOOKING_TYPES = ["Seminar", "Club", "Workshop", "Hackathon", "Training"];
-const BOOKING_STATUSES = ["Pending", "Approved", "Rejected"];
+const BOOKING_TYPES = [
+	"Seminar",
+	"Club",
+	"Workshop",
+	"Hackathon",
+	"Training",
+	"Conference",
+	"Wedding",
+	"Exhibition",
+	"Corporate",
+	"Cultural",
+	"Sports",
+	"Meeting",
+];
+const BOOKING_STATUSES = [
+	"Draft",
+	"Requested",
+	"Pending",
+	"Approved",
+	"Confirmed",
+	"In Progress",
+	"Completed",
+	"Cancelled",
+	"Rejected",
+];
 
 const asString = (value) => (typeof value === "string" ? value.trim() : "");
 const asNumber = (value) => (typeof value === "number" ? value : Number(value));
@@ -10,11 +33,13 @@ const normalizeRequestedRole = (value) => {
 	if (!raw) return "";
 	if (raw === "admin" || raw === "event organizer") return "admin";
 	if (raw === "faculty") return "faculty";
+	if (raw === "owner") return "owner";
+	if (raw === "customer") return "customer";
 	if (raw === "student" || raw === "coordinator" || raw === "student coordinator" || raw === "event coordinator") {
 		return "student";
 	}
 
-	return "";
+	return raw;
 };
 
 const isValidDate = (value) => /^\d{4}-\d{2}-\d{2}$/.test(value);

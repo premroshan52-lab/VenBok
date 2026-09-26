@@ -1,0 +1,14 @@
+{
+  "name": "venbok-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Venue Booking platform root runner",
+  "scripts": {
+    "start": "npm --prefix frontend start",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend start",
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "seed": "npm --prefix backend run seed",
+    "dev": "npx --yes concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend start\""
+  }
+}

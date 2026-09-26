@@ -24,8 +24,17 @@ const validateCreateSpace = (payload = {}) => {
 
 	const name = asString(payload.name);
 	const type = asString(payload.type);
-	const capacity = asNumber(payload.capacity);
+	const rawCapacity = payload.capacity;
+	const capacity =
+		rawCapacity === null || rawCapacity === undefined || rawCapacity === ""
+			? null
+			: asNumber(rawCapacity);
 	const imageUrl = asString(payload.imageUrl);
+	const imageSource = payload.imageSource ? asString(payload.imageSource) : null;
+	const sourceUrl = payload.sourceUrl ? asString(payload.sourceUrl) : null;
+	const sourceName = payload.sourceName ? asString(payload.sourceName) : null;
+	const isVerified = payload.isVerified !== undefined ? Boolean(payload.isVerified) : false;
+	const isDemo = payload.isDemo !== undefined ? Boolean(payload.isDemo) : !isVerified;
 
 	if (!name) {
 		errors.push("name is required");
@@ -39,15 +48,17 @@ const validateCreateSpace = (payload = {}) => {
 		errors.push("type must be at most 60 characters long");
 	}
 
-	if (!Number.isInteger(capacity) || capacity <= 0) {
-		errors.push("capacity must be a positive integer");
-	} else if (capacity > 5000) {
-		errors.push("capacity must be less than or equal to 5000");
+	if (capacity !== null) {
+		if (!Number.isInteger(capacity) || capacity <= 0) {
+			errors.push("capacity must be a positive integer when provided");
+		} else if (capacity > 5000) {
+			errors.push("capacity must be less than or equal to 5000");
+		}
 	}
 
-	if (imageUrl.length > 3_000_000) {
+	if (imageUrl && imageUrl.length > 3_000_000) {
 		errors.push("imageUrl is too large");
-	} else if (!isValidImageUrl(imageUrl)) {
+	} else if (imageUrl && !isValidImageUrl(imageUrl)) {
 		errors.push("imageUrl must be a valid http(s) URL or image data URL");
 	}
 
@@ -59,6 +70,22 @@ const validateCreateSpace = (payload = {}) => {
 			type,
 			capacity,
 			imageUrl: imageUrl || null,
+			imageSource,
+			sourceUrl,
+			sourceName,
+			isVerified,
+			isDemo,
+			verificationLevel: payload.verificationLevel || (isVerified ? "Verified" : "Unverified"),
+			...(payload.hourlyRate !== undefined ? { hourlyRate: Number(payload.hourlyRate) } : {}),
+			...(payload.dailyRate !== undefined ? { dailyRate: Number(payload.dailyRate) } : {}),
+			...(payload.city ? { city: asString(payload.city) } : {}),
+			...(payload.address ? { address: asString(payload.address) } : {}),
+			...(payload.location ? { location: payload.location } : {}),
+			...(payload.description ? { description: asString(payload.description) } : {}),
+			...(payload.facilities ? { facilities: payload.facilities } : {}),
+			...(payload.status ? { status: payload.status } : {}),
+			...(payload.organizationId ? { organizationId: payload.organizationId } : {}),
+			...(payload.ownerId ? { ownerId: payload.ownerId } : {}),
 		},
 	};
 };
@@ -82,6 +109,20 @@ const validateUpdateSpace = (payload = {}) => {
 		value: {
 			id,
 			...createResult.value,
+			...(payload.isVerified !== undefined ? { isVerified: Boolean(payload.isVerified) } : {}),
+			...(payload.isDemo !== undefined ? { isDemo: Boolean(payload.isDemo) } : {}),
+			...(payload.sourceName !== undefined ? { sourceName: payload.sourceName ? asString(payload.sourceName) : null } : {}),
+			...(payload.sourceUrl !== undefined ? { sourceUrl: payload.sourceUrl ? asString(payload.sourceUrl) : null } : {}),
+			...(payload.imageSource !== undefined ? { imageSource: payload.imageSource ? asString(payload.imageSource) : null } : {}),
+			...(payload.verificationLevel ? { verificationLevel: payload.verificationLevel } : {}),
+			...(payload.hourlyRate !== undefined ? { hourlyRate: Number(payload.hourlyRate) } : {}),
+			...(payload.dailyRate !== undefined ? { dailyRate: Number(payload.dailyRate) } : {}),
+			...(payload.city ? { city: asString(payload.city) } : {}),
+			...(payload.address ? { address: asString(payload.address) } : {}),
+			...(payload.location ? { location: payload.location } : {}),
+			...(payload.description ? { description: asString(payload.description) } : {}),
+			...(payload.facilities ? { facilities: payload.facilities } : {}),
+			...(payload.status ? { status: payload.status } : {}),
 		},
 	};
 };

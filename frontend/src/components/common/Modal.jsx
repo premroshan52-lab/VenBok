@@ -1,21 +1,55 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { X } from "lucide-react";
 
-const Modal = ({ title, onClose, children }) => {
+const Modal = ({
+  title,
+  subtitle,
+  onClose,
+  children,
+  footer,
+  maxWidth = "560px",
+  style = {},
+}) => {
+  // Close on ESC key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && onClose) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.5)" }}>
-      <div
-        className="card"
-        style={{ maxWidth: "520px", margin: "80px auto", position: "relative" }}
-      >
-        <button
-          onClick={onClose}
-          className="button secondary"
-          style={{ position: "absolute", top: 12, right: 12 }}
-        >
-          Close
-        </button>
-        <h3>{title}</h3>
-        <div>{children}</div>
+    <div
+      className="spacio-modal-backdrop"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && onClose) {
+          onClose();
+        }
+      }}
+    >
+      <div className="spacio-modal-container" style={{ maxWidth, ...style }}>
+        <div className="spacio-modal-header">
+          <div>
+            {title && <h3>{title}</h3>}
+            {subtitle && <p className="card-subtitle">{subtitle}</p>}
+          </div>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="spacio-close-btn"
+              aria-label="Close dialog"
+            >
+              <X size={18} />
+            </button>
+          )}
+        </div>
+
+        <div className="spacio-modal-body">{children}</div>
+
+        {footer && <div className="spacio-modal-footer">{footer}</div>}
       </div>
     </div>
   );

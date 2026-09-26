@@ -14,11 +14,11 @@ const parseCorsOrigins = (rawValue) => {
 };
 
 const env = {
-	nodeEnv: process.env.NODE_ENV ,
-	port: Number(process.env.PORT) ,
-	mongoUri: process.env.MONGO_URI ,
-	jwtSecret: process.env.JWT_SECRET ,
-	jwtExpiresIn: process.env.JWT_EXPIRES_IN ,
+	nodeEnv: process.env.NODE_ENV || "development",
+	port: Number(process.env.PORT) || 5000,
+	mongoUri: process.env.MONGO_URI || "mongodb://127.0.0.1:27017/VenBok",
+	jwtSecret: process.env.JWT_SECRET || "venue-booking-dev-secret",
+	jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
 	corsOrigins: parseCorsOrigins(process.env.CORS_ORIGIN),
 };
 

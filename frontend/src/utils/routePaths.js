@@ -1,5 +1,12 @@
 export const PATHS = {
+  HOME: "/",
   LOGIN: "/login",
+  EXPLORE: "/explore",
+  PLANNER: "/planner",
+  COMPARE: "/compare",
+  SAVED: "/saved",
+  CUSTOMER_DASHBOARD: "/dashboard/customer",
+  OWNER_DASHBOARD: "/dashboard/owner",
   ADMIN_DASHBOARD: "/dashboard/admin",
   FACULTY_DASHBOARD: "/dashboard/faculty",
   COORDINATOR_DASHBOARD: "/dashboard/coordinator",
@@ -7,4 +14,6 @@ export const PATHS = {
   SPACES: "/spaces",
   CALENDAR: "/calendar",
   BOOKING_REPORT: "/report",
+  SETTINGS: "/settings",
+  NOTIFICATIONS: "/notifications",
 };

@@ -36,7 +36,7 @@ const listSpaces = async (query = {}) => {
 		}
 	}
 
-	const spaces = await Space.find(where).sort({ _id: 1 });
+	const spaces = await Space.find(where).sort({ isVerified: -1, _id: 1 });
 	return spaces.map(toPlain);
 };
 
@@ -88,14 +88,10 @@ const updateSpace = async (payload = {}) => {
 		throw ApiError.conflict("Another space with the same name already exists");
 	}
 
+	const { id, ...updateFields } = value;
 	const updated = await Space.findByIdAndUpdate(
-		value.id,
-		{
-			name: value.name,
-			type: value.type,
-			capacity: value.capacity,
-			imageUrl: value.imageUrl,
-		},
+		id,
+		updateFields,
 		{ new: true }
 	);
 	return toPlain(updated);

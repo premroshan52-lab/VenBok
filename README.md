@@ -1,246 +1,184 @@
-# Venue Booking System
+# VENBOK PRO — Intelligent Venue Discovery, Booking & Optimization Platform
 
-A full-stack venue booking platform for academic institutions. It allows users to register/login, request space bookings, view booking calendars, and (for admins) manage spaces, booking approvals, and reports.
+**VENBOK PRO** transforms venue and space scheduling from a basic internal classroom-reservation app into a full-scale, multi-tenant, intelligent venue discovery, event planning, reservation, and asset utilization optimization ecosystem.
 
-## Tech Stack
+Built to seamlessly serve both **Educational Institutions** (such as Sri Eshwar College of Engineering) and **Commercial Venue Owners / Event Organizers**, VenBok Pro delivers AI-guided recommendation scoring, automated requirement planning, dynamic pricing advice, 10-state booking workflows, conflict locking, digital checkout, verified ratings, and transparent dispute arbitration.
 
-### Backend
-- Node.js + Express
-- PostgreSQL + Sequelize
-- JWT authentication
-- bcrypt password hashing
-- PDF report generation (pdfkit)
+---
 
-### Frontend
-- React 18
-- React Router
-- Axios
-- Context API for auth/data state
-- Responsive custom CSS UI
+## 🌟 Key Highlights & Architectural Pillars
 
-## Current Implemented Features
+### 1. Dual Operating Modes
+VenBok Pro features a one-click mode switcher in the global navigation bar:
+- 🏛️ **Institution Mode**: Optimized for universities, colleges, and internal campus faculties. Focuses on academic timetable compliance, departmental approvals, student club permits, lab reservations, and room utilization without commercial fee barriers.
+- 🎪 **Marketplace Mode**: Public-facing commercial discovery platform for convention centers, banquet halls, corporate auditoriums, open-air lawns, and private venues. Enables public search, transparent hourly/daily pricing, online payments, and deposit management.
 
-### Authentication and Access
-- User registration and login
-- Institutional email validation (`@sece.ac.in`)
-- JWT-based auth with persisted session
-- Role-based frontend routing with protected pages
+---
 
-### Roles
-- `admin`
-- `faculty`
-- `student`
-- `coordinator` (stored in backend enum; frontend coordinator dashboard path is shared with student flow)
+### 2. Three User Ecosystems & Dedicated Hubs
 
-### User Registration Status
-- New users are created as `active`
-- User status logic is active-only in current backend model + DB sync behavior
+| Persona | Primary Role | Dedicated Experience & Actions |
+| :--- | :--- | :--- |
+| **Customer / Event Organizer** | Corporate planners, clubs, wedding/exhibition hosts | **Customer Dashboard** (`/dashboard/customer`): Upcoming events, visual 5-step status stepper, UPI/Card payment modal, invoice receipts, bookmarked spaces, verified review submission, and dispute tickets. |
+| **Venue Owner** | Commercial venue managers, private auditorium operators | **Owner Dashboard** (`/dashboard/owner`): Real-time occupancy %, revenue yield, seasonal demand forecasting, smart dynamic pricing advisor (+15-20% surge or weekday discount prompts), and promotional discount campaign creator. |
+| **Super & Campus Admin** | Institutional heads, facility managers, platform arbiters | **Super Admin Console** (`/dashboard/admin`): Verification badge manager (`Unverified`, `Verified ✓`, `Premium Verified ★`), full 10-state booking lifecycle overrides, dispute arbitration mediation desk, and multi-tenant organization manager. |
 
-### Space Management
-- Create, update, delete spaces (admin workflow)
-- Space attributes:
-  - name
-  - type
-  - capacity
-  - imageUrl (optional)
-- Space list available to authenticated users
+---
 
-### Booking Management
-- Create booking requests
-- Booking attributes include:
-  - title
-  - type (`Seminar`, `Club`, `Workshop`, `Hackathon`, `Training`)
-  - spaceId
-  - date
-  - start/end time
-  - participants
-  - organizedBy
-  - notes
-  - requestedBy
-  - requestedRole
-- Booking statuses:
-  - `Pending`
-  - `Approved`
-  - `Rejected`
-- Admin can approve/reject pending bookings
-- Final-status guard in workflow (pending is the editable state)
+### 3. AI & Intelligent Decision Engines
 
-### Booking Validation and Conflict Rules
-- Required-field and time-format validation
-- Capacity check against selected space
-- Same-space time overlap prevention
-- Academic override conflict prevention
+#### A. Natural Language Query Parser (`POST /api/intelligence/parse-query`)
+Parses conversational queries into structured parameters:
+- *Example input:* `"Air-conditioned auditorium for 500 guests with sound system under 40000 in Coimbatore"`
+- *Parsed attributes:* `{ capacity: 500, maxBudget: 40000, eventType: "Seminar", facilities: ["Sound System", "Air Conditioning"], city: "Coimbatore" }`
 
-### Calendar and Availability
-- Calendar page with slot-based availability view
-- Timetable override support:
-  - `academic`
-  - `available`
-- Mobile + desktop calendar layouts
+#### B. Explainable Multi-Factor Recommendation Engine (`POST /api/intelligence/recommend`)
+Scores each candidate venue out of 100 based on a weighted multi-factor formula:
+$$\text{Total Score} = 0.35 \times S_{\text{capacity}} + 0.25 \times S_{\text{facilities}} + 0.20 \times S_{\text{budget}} + 0.10 \times S_{\text{rating}} + 0.10 \times S_{\text{availability}}$$
+Every recommendation displays human-readable badge reasons (e.g. *"94% Match: Perfect 500 capacity fit • Matches all technical AV prerequisites • Within budget"*).
 
-### Reporting
-- Booking report endpoint with totals and scoped data
-- PDF download of booking report
-- Admin report page in frontend
+#### C. Event Requirement Architect & Planner (`GET /api/intelligence/event-plan`)
+Guides event organizers through 7 distinct event profiles (*Tech Hackathon, Academic Conference, Corporate Product Launch, Cultural Gala, Hands-on Lab Workshop, Executive Board Meeting, Sports Tournament*). Automatically calculates:
+- Safety and staging capacity buffers ($+15\%$ to $+25\%$)
+- Essential technical requirements (high-capacity power drops, static IPs, green rooms, PA acoustics)
+- Optimal stage, seating, and banquet layout recommendations
 
-### Dashboards
-- Admin dashboard
-  - total spaces
-  - total requests
-  - pending requests
-  - space management panel
-  - booking review panel
-  - calendar availability section
-- Faculty dashboard
-  - role-based request counts
-  - booking list visibility
-- Student dashboard
-  - role-based request counts
-  - booking list visibility
+#### D. Tiered Smart Cost Estimator (`POST /api/intelligence/cost-estimate`)
+Delivers realistic, three-tier budget models (*Budget, Recommended, Premium*) with itemized breakdowns for base rental, technical equipment, facility fees, catering, and 18% statutory GST.
 
-## Project Structure
+#### E. Space Utilization & Demand Analytics (`GET /api/intelligence/utilization`)
+Measures asset efficiency across the entire inventory:
+$$\text{Utilization Percentage} = \left(\frac{\text{Total Booked Slot Hours}}{\text{Total Available Slot Hours}}\right) \times 100$$
+Identifies peak demand days, underutilized weekday windows, and advises owners when to apply dynamic surge pricing or promotional flash discounts.
 
-```
-Venue Booking/
-  backend/
-    src/
-      app.js
-      config/
-      controllers/
-      middlewares/
-      models/
-      routes/
-      services/
-      utils/
-      validators/
-    server.js
-    package.json
-  frontend/
-    src/
-      components/
-      context/
-      pages/
-      routes/
-      services/
-      utils/
-      App.css
-      App.js
-      config.js
-    package.json
-  railway.json
+---
+
+## 🔄 10-State Booking Lifecycle & Conflict Locking
+
+Every reservation passes through a protected lifecycle managed by backend state validation:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Requested: User submits booking
+    Requested --> Approved: Admin/Owner approves
+    Requested --> Rejected: Rejected / Conflict detected
+    Approved --> DepositPending: Commercial venue deposit requested
+    DepositPending --> Confirmed: Payment verified
+    Approved --> Confirmed: Institutional / Zero-fee reservation
+    Confirmed --> InProgress: Event start time reached
+    InProgress --> Completed: Event conclusion
+    Completed --> Archived: 30 days post event
+    Requested --> Cancelled: Cancelled by user
+    Approved --> Cancelled: Cancelled by user
+    Confirmed --> Disputed: Dispute raised by customer
+    Disputed --> Resolved: Admin mediation closed
+    Resolved --> Completed: Final settlement
 ```
 
-## Backend API Overview
+- **Conflict Prevention**: Overlapping time slots are evaluated at both service and database levels, preventing double-bookings.
+- **Locking**: Active checkout attempts temporarily lock the slot to prevent simultaneous checkout collisions.
 
-Base URL: `http://localhost:5000/api` (local default)
+---
 
-### Auth
-- `POST /auth/login`
-- `POST /auth/register`
-- `GET /auth/me`
+## 💳 Payments, Invoicing, Reviews & Dispute Arbitration
 
-### Bookings
-- `GET /bookings`
-- `GET /bookings/report`
-- `GET /bookings/report/pdf`
-- `GET /bookings/:id`
-- `POST /bookings`
-- `PATCH /bookings/:id/status`
-- `DELETE /bookings/:id`
+1. **Digital Checkout (`POST /api/payments/checkout`)**:
+   - Supports UPI (GPay, PhonePe), Credit/Debit Cards, Net Banking, and Corporate POs.
+   - Generates instantaneous verifiable transaction IDs (`TXN-...`) and downloadable tax invoice receipts.
+2. **Verified Reviews (`POST /api/reviews`)**:
+   - Star ratings across 4 subcategories: *Cleanliness, Audio/Visual Facilities, Staff Support, Value for Money*.
+   - Automatically recalibrates the venue's overall rating average upon publication.
+3. **Dispute Arbitration Desk (`POST /api/complaints`, `PATCH /api/complaints/:id/status`)**:
+   - Covers 5 issue categories: *Venue Facility Issue, Billing / Refund Dispute, Noise / Overcrowding, Service Breakdown, Cancellation Request*.
+   - Enables venue owners to respond and gives Super Admins ultimate arbitration authority to record binding rulings.
 
-### Spaces
-- `GET /spaces`
-- `GET /spaces/:id`
-- `POST /spaces`
-- `PUT /spaces/:id`
-- `DELETE /spaces/:id`
+---
 
-### Users
-- `GET /users`
-- `GET /users/:id`
-- `PATCH /users/:id`
-- `DELETE /users/:id`
+## 🗄️ Database Architecture & Extended Schema
 
-### Timetable Overrides
-- `GET /timetable-overrides`
-- `POST /timetable-overrides`
-- `DELETE /timetable-overrides/:id`
+VenBok Pro is backed by MongoDB with Mongoose:
+- **`User`**: Roles (`admin`, `owner`, `customer`, `faculty`, `student`, `coordinator`), profile, department, contact info.
+- **`Space`** *(aliased as `Venue`)*: Capacity, hourlyRate, dailyRate, city, coordinates (`lat`, `lng`), facilities, verificationLevel (`Unverified`, `Verified`, `Premium Verified`), ownerId, organizationId, photos, rules.
+- **`Booking`**: 10 workflow states, duration, costBreakdown, totalAmount, depositAmount, transactionId, paymentStatus (`Unpaid`, `Deposit Paid`, `Paid`, `Refunded`).
+- **`Organization`**: Multi-tenant institutional containers (e.g., *Sri Eshwar College of Engineering, Kovai Tech Park, Codissia Complex*).
+- **`Review`**: Star ratings, category scores, feedback comments, verified booking link.
+- **`Payment`**: Transaction ID, payment gateway, amount, currency, invoice URL, payment status.
+- **`Promotion`**: Promo code, discount percentage, validity window, usage limits.
+- **`Complaint`**: Dispute subject, category, description, status (`Open`, `In Review`, `Resolved`), owner response, admin resolution ruling.
+- **`Notification`**: In-app push notifications for approvals, payments, status shifts, and promotions.
+- **`TimetableOverride`**: College timetable class schedule overrides.
 
-### Health
-- `GET /health`
+---
 
-## Environment Variables
+## 🔑 Pre-Seeded Demo Accounts & Credentials
 
-### Backend (`backend/.env`)
-- `NODE_ENV`
-- `PORT`
-- `DATABASE_URL` (recommended for cloud)
-- `PG_HOST`
-- `PG_PORT`
-- `PG_DATABASE`
-- `PG_USER`
-- `PG_PASSWORD`
-- `JWT_SECRET`
-- `JWT_EXPIRES_IN`
-- `CORS_ORIGIN` (single origin or comma-separated)
+The system comes pre-seeded with **12 users**, **20 venues/spaces**, **42 realistic bookings**, **6 reviews**, **3 active promotions**, and **2 dispute tickets**.
 
-### Frontend (`frontend/.env`)
-- `REACT_APP_API_BASE_URL` (optional)
+> **Global Demo Password for all accounts:** `Venbok@123`
 
-If frontend env var is missing, the app falls back to runtime host-based defaults defined in `frontend/src/config.js`.
+| Role | Demo Email | Typical Use Case |
+| :--- | :--- | :--- |
+| **Campus & Super Admin** | `admin@sece.ac.in` | Full system control, badge verification, dispute rulings |
+| **Commercial Venue Owner** | `owner@demo.venbok.local` | Occupancy stats, pricing recommendations, promotions |
+| **Customer / Event Organizer** | `customer@demo.venbok.local` | Venue discovery, instant booking, checkout, reviews |
+| **Faculty Coordinator** | `faculty@sece.ac.in` | Departmental approvals, seminar scheduling |
+| **Student / Club Lead** | `student@sece.ac.in` | Hackathon and club room requests |
 
-## Local Development
+*Tip: You can switch between these roles in 1 click using the **"⚡ Demo Logins"** dropdown in the top navbar.*
 
-### 1) Install dependencies
+---
 
-Backend:
-```bash
-cd backend
-npm install
+## 🚀 Running VenBok Pro Locally
+
+### Prerequisites
+- Node.js (v18+)
+- MongoDB daemon running locally on port `27017`
+
+### 1. Start MongoDB Daemon (if not already running)
+```powershell
+mongod --dbpath "C:\Users\<user>\mongodb_data" --port 27017
 ```
 
-Frontend:
-```bash
-cd frontend
-npm install
+### 2. Seed Database with Realistic Demo Data
+From the project root:
+```powershell
+npm run seed
 ```
 
-### 2) Configure env
-- Create backend `.env` with DB/JWT/CORS settings.
-- (Optional) Create frontend `.env` with `REACT_APP_API_BASE_URL`.
-
-### 3) Start backend
-```bash
-cd backend
+### 3. Start Both Backend & Frontend Concurrently
+From the project root:
+```powershell
 npm run dev
 ```
 
-### 4) Start frontend
-```bash
-cd frontend
-npm start
-```
+- **Frontend App**: `http://localhost:3000`
+- **Backend API**: `http://localhost:5000`
+- **API Health Check**: `http://localhost:5000/api/spaces`
 
-## Deployment Notes
+---
 
-- Backend is structured for Render-style deployment (`render.json` present).
-- Frontend can be deployed to Vercel or any static React host.
-- Ensure backend `CORS_ORIGIN` includes frontend production origin(s).
-- Ensure frontend API base URL points to deployed backend.
+## 🧭 Application Route Sitemap
 
-## Current Workflow Summary
+| Route Path | Description | Access |
+| :--- | :--- | :--- |
+| `/` | VenBok Pro Hero Landing Page & Mode Switcher | Public |
+| `/explore` | Smart Natural Language Search & Interactive Map Canvas | Public / All |
+| `/planner` | Event Requirement Architect & Tiered Cost Estimator | Public / All |
+| `/compare` | Side-by-Side Venue Comparison Matrix | Public / All |
+| `/dashboard/customer` | Customer / Event Organizer Hub & Checkout | Customer, Admin, Coordinator |
+| `/dashboard/owner` | Venue Owner Analytics, Demand Forecast & Dynamic Pricing | Owner, Admin |
+| `/dashboard/admin` | Super Admin Governance, Verification & Dispute Arbitration | Super Admin |
+| `/dashboard/faculty` | Educational Institutional Faculty Coordinator Console | Faculty, Admin |
+| `/dashboard/coordinator` | Student Body & Club Leader Space Request Desk | Student, Coordinator, Admin |
+| `/bookings` | Unified Reservations History & Status Tracking | Authenticated |
+| `/spaces` | Full Venue Space Directory & Specifications | Authenticated |
+| `/calendar` | Interactive Visual Booking Calendar & Timetable Overrides | Authenticated |
+| `/report` | Analytical PDF / Data Reports Generator | Admin, Owner |
+| `/login` | Authentication Portal | Public |
 
-1. User registers/logs in.
-2. JWT session is established.
-3. Role-based route access controls pages.
-4. Users browse spaces and create booking requests.
-5. Admin reviews pending bookings and updates status.
-6. Calendar reflects bookings and overrides.
-7. Admin can generate and download reports.
+---
 
-## Important Notes
-
-- New-user approval flow is removed in current implementation.
-- Booking approval flow remains active.
-- UI uses a top fixed navbar; sidebar is not part of active workflow.
-- README reflects implemented behavior only, based on current code state.
+## 🛠️ Tech Stack Architecture
+- **Frontend**: React 18, React Router v6, Axios, Context API (`AuthContext`, `DataContext`), OGL particle animations, custom responsive glassmorphic design system.
+- **Backend**: Node.js, Express.js, MongoDB (Mongoose ODM), JWT, bcryptjs, custom middleware architecture, PDFKit.
+- **Intelligence Algorithms**: Rule-based natural language parser, weighted Euclidean distance scoring model, dynamic capacity buffering, and predictive hourly pricing yield curves.

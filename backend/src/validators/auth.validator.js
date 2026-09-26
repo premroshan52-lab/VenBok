@@ -1,4 +1,4 @@
-const USER_ROLES = ["admin", "faculty", "student"];
+const USER_ROLES = ["admin", "faculty", "student", "coordinator", "owner", "customer"];
 
 const asString = (value) => (typeof value === "string" ? value.trim() : "");
 
@@ -6,7 +6,7 @@ const normalizeUserRole = (value) => {
 	const role = asString(value).toLowerCase();
 
 	if (!role) return "";
-	if (role === "coordinator" || role === "student coordinator") return "student";
+	if (role === "student coordinator") return "coordinator";
 	return role;
 };
 
@@ -61,8 +61,8 @@ const validateRegister = (payload = {}) => {
 		errors.push("email is required");
 	} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
 		errors.push("email must be a valid email address");
-	} else if (!email.endsWith("@sece.ac.in")) {
-		errors.push("email must end with @sece.ac.in");
+	} else if (["faculty", "student"].includes(role) && !email.endsWith("@sece.ac.in") && !email.includes("demo.venbok.local")) {
+		errors.push("institutional faculty/student email must end with @sece.ac.in");
 	}
 
 	if (!password) {

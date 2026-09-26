@@ -86,7 +86,7 @@ const createBooking = async (payload = {}) => {
 		throw ApiError.notFound("Space not found");
 	}
 
-	if (value.participants > space.capacity) {
+	if (space.capacity && value.participants > space.capacity) {
 		throw ApiError.badRequest("Participant count exceeds selected space capacity");
 	}
 
@@ -137,11 +137,17 @@ const updateBookingStatus = async (bookingId, payload = {}) => {
 		throw ApiError.badRequest("Invalid status payload", errors);
 	}
 
-	if (existing.status !== "Pending") {
-		throw ApiError.badRequest("Booking status is final and cannot be changed");
+	// Terminal states check: once Completed or Cancelled, it is locked
+	if (["Completed", "Cancelled"].includes(existing.status) && value.status !== existing.status) {
+		throw ApiError.badRequest("Booking is already finalized and cannot be modified");
 	}
 
 	existing.status = value.status;
+	if (payload.paymentStatus) existing.paymentStatus = payload.paymentStatus;
+	if (payload.transactionId) existing.transactionId = payload.transactionId;
+	if (payload.totalAmount !== undefined) existing.totalAmount = payload.totalAmount;
+	if (payload.rejectionReason) existing.rejectionReason = payload.rejectionReason;
+
 	await existing.save();
 	return toPlain(existing);
 };

@@ -12,7 +12,21 @@ const bookingSchema = new mongoose.Schema(
 		type: {
 			type: String,
 			required: true,
-			enum: ["Seminar", "Club", "Workshop", "Hackathon", "Training"],
+			enum: [
+				"Seminar",
+				"Club",
+				"Workshop",
+				"Hackathon",
+				"Training",
+				"Conference",
+				"Wedding",
+				"Exhibition",
+				"Corporate",
+				"Cultural",
+				"Sports",
+				"Meeting",
+			],
+			default: "Seminar",
 		},
 		spaceId: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -55,12 +69,61 @@ const bookingSchema = new mongoose.Schema(
 		requestedRole: {
 			type: String,
 			default: "",
-			enum: ["admin", "faculty", "student", "coordinator", ""],
+			enum: ["admin", "faculty", "student", "coordinator", "owner", "customer", ""],
+		},
+		userId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+			default: null,
 		},
 		status: {
 			type: String,
 			default: "Pending",
-			enum: ["Pending", "Approved", "Rejected"],
+			enum: [
+				"Draft",
+				"Requested",
+				"Pending",
+				"Approved",
+				"Confirmed",
+				"In Progress",
+				"Completed",
+				"Cancelled",
+				"Rejected",
+			],
+		},
+		totalAmount: {
+			type: Number,
+			default: 0,
+			min: 0,
+		},
+		paymentStatus: {
+			type: String,
+			enum: ["Unpaid", "Pending", "Paid", "Refunded", "N/A", "Free"],
+			default: "N/A",
+		},
+		transactionId: {
+			type: String,
+			default: "",
+		},
+		costBreakdown: {
+			venueRental: { type: Number, default: 0 },
+			equipment: { type: Number, default: 0 },
+			catering: { type: Number, default: 0 },
+			decoration: { type: Number, default: 0 },
+			platformFee: { type: Number, default: 0 },
+			taxes: { type: Number, default: 0 },
+		},
+		requirements: {
+			catering: { type: Boolean, default: false },
+			soundSystem: { type: Boolean, default: false },
+			stageSetup: { type: Boolean, default: false },
+			liveStreaming: { type: Boolean, default: false },
+			powerBackup: { type: Boolean, default: false },
+			security: { type: Boolean, default: false },
+		},
+		rejectionReason: {
+			type: String,
+			default: "",
 		},
 	},
 	{
@@ -90,5 +153,6 @@ bookingSchema.index({ spaceId: 1, date: 1, start: 1, end: 1 });
 bookingSchema.index({ spaceId: 1 });
 bookingSchema.index({ date: 1 });
 bookingSchema.index({ status: 1 });
+bookingSchema.index({ userId: 1 });
 
 module.exports = mongoose.model("Booking", bookingSchema);

@@ -30,21 +30,32 @@ const userSchema = new mongoose.Schema(
 		},
 		roleDescription: {
 			type: String,
-			required: true,
 			default: "",
 			maxlength: 120,
 		},
 		role: {
 			type: String,
 			required: true,
-			enum: ["admin", "faculty", "student", "coordinator"],
+			enum: ["admin", "faculty", "student", "coordinator", "owner", "customer"],
+			default: "customer",
 		},
 		status: {
 			type: String,
 			required: true,
 			default: "active",
-			enum: ["active"],
+			enum: ["active", "suspended"],
 		},
+		organizationId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Organization",
+			default: null,
+		},
+		savedVenues: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Space",
+			},
+		],
 	},
 	{
 		timestamps: true,
